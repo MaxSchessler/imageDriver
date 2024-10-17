@@ -48,7 +48,7 @@ Pixel ** copyImage(Pixel **image, int height, int width);
  * @param width The width of the original image.
  * @return A new 2D array of Pixels representing the rotated image.
  */
-Pixel **transpose(Pixel **image, int height, int width);
+Pixel **transpose(Pixel **image, int *height, int *width);
 
 /**
  * This function will reverse every row in the 2D array of Pixels in order to complete the rotation of the image.

@@ -118,33 +118,51 @@ void flipVertical(Pixel **image, int height, int width) {
 
 Pixel ** rotateClockwise(Pixel **image, int height, int width) {
   // first tanspose an array, then reverse the transposed array rows
-  Pixel **transposed = transpose(image, height, width);
-  reverseRows(transposed, height, width);
-  return transposed;
+  Pixel **newImage = transpose(image, &height, &width);
+  //reverseRows(transposed, height, width);
+  flipVertical(newImage, height, width);
+  return newImage;
 }
 
-Pixel **transpose(Pixel **image, int height, int width) {
+Pixel **transpose(Pixel **image, int *height, int *width) {
 
   // no need to check for null pointer or invalid h,w
 
-  Pixel **newImage = (Pixel **) malloc(sizeof(Pixel *) * width); // doing width here will flip the dimensions
+  // create a new array of inverse dimensions (height * width) -> (width * height)
+  // in the original image width is the length of the internal arrays, width here is 
+  // the number or rows/arrays inside our 2D array
+  Pixel **newImage = (Pixel **) malloc(sizeof(Pixel *) * *width); 
   if (newImage == NULL) {
-    printf("Allocation failed for new image (transpose).\n");
     return NULL;
   }
 
-  for (int i = 0; i<height; i++) { // height here will flip dimensions 
-    newImage[i] = (Pixel *) malloc(sizeof(Pixel) * height);
+  // iterate over newImage and width as the number of arrays indside it
+  for (int i = 0; i<*width; i++) {
+    // create a new array and check if the allocation failed
+    // if alloc failed free previous rows
+    newImage[i] = (Pixel *) malloc(sizeof(Pixel) * *height);
     if (newImage[i] == NULL) {
-      for (int j = 0; j<i; j++) {
-        free(newImage[j]);
+      for (int k = 0; k<i; k++) {
+        free(newImage[k]);
       }
       free(newImage);
-      printf("Allocation failed for row in new image (transpose). \n");
       return NULL;
-    } 
+    }
   }
 
+// since newimage becomes (height * width) -> (width * height) we will 
+// put values from original image (i, j) into new image (j, i)
+// (j, i) may not exist in certain dimensions so we will iterate over the original dimensions
+  for (int i = 0; i<*height; i++) {
+    for (int j = 0; j<*width; j++) {
+      newImage[j][i] = image[i][j]; // moves pixel (i,j) to (j,i)
+    }
+  }
+
+  // update height and width 
+  int temp = *height;
+  *height = *width;
+  *width = temp;
   return newImage;
 
 }
