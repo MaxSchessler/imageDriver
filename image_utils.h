@@ -87,5 +87,3 @@ void flipVertical(Pixel **image, int height, int width);
  */
 Pixel ** rotateClockwise(Pixel **image, int height, int width);
 
-
-Pixel ** rotateCounterClockwise(Pixel **image, int height, int width)
