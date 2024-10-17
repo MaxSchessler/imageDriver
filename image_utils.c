@@ -118,61 +118,70 @@ void flipVertical(Pixel **image, int height, int width) {
 
 Pixel ** rotateClockwise(Pixel **image, int height, int width) {
   // first tanspose an array, then reverse the transposed array rows
-  Pixel **newImage = transpose(image, &height, &width);
-  //reverseRows(transposed, height, width);
-  flipVertical(newImage, height, width);
-  return newImage;
+  // new height and width of transposed array
+  int tHeight, tWidth;
+  Pixel **transposedImage = transpose(image, height, width, &tHeight, &tWidth);
+  reverseRows(transposedImage, tHeight, tWidth);
+  return transposedImage;
 }
 
-Pixel **transpose(Pixel **image, int *height, int *width) {
+Pixel ** rotateCounterClockwise(Pixel **image, int height, int width) {
+
+}
+
+Pixel **transpose(Pixel **image, int height, int width, int *tHeight, int *tWidth) {
 
   // no need to check for null pointer or invalid h,w
 
-  // create a new array of inverse dimensions (height * width) -> (width * height)
-  // in the original image width is the length of the internal arrays, width here is 
-  // the number or rows/arrays inside our 2D array
-  Pixel **newImage = (Pixel **) malloc(sizeof(Pixel *) * *width); 
+  // create a new array of opposite dimensions
+  Pixel **newImage = (Pixel **) malloc(sizeof(Pixel *) * width);
   if (newImage == NULL) {
+    printf("Allocation for new image failed in transpose.\n");
     return NULL;
   }
 
-  // iterate over newImage and width as the number of arrays indside it
-  for (int i = 0; i<*width; i++) {
-    // create a new array and check if the allocation failed
-    // if alloc failed free previous rows
-    newImage[i] = (Pixel *) malloc(sizeof(Pixel) * *height);
+  // create the rows of length height to change dimensions
+  for (int i = 0; i<width; i++) { // using width here will iterate over the number of rows
+    newImage[i] = (Pixel *) malloc(sizeof(Pixel) * height); // height here will create (height) number of rows
+    // check if allocation failed for a new row
     if (newImage[i] == NULL) {
+      // free prev allocated rows from 0 to i (not including i as it was not successfully allocated)
       for (int k = 0; k<i; k++) {
         free(newImage[k]);
       }
+      // free the newImage
       free(newImage);
       return NULL;
     }
+
+    // else: row was allocated
   }
 
-// since newimage becomes (height * width) -> (width * height) we will 
-// put values from original image (i, j) into new image (j, i)
-// (j, i) may not exist in certain dimensions so we will iterate over the original dimensions
-  for (int i = 0; i<*height; i++) {
-    for (int j = 0; j<*width; j++) {
-      newImage[j][i] = image[i][j]; // moves pixel (i,j) to (j,i)
+  // whole table was allocated if we get to this point
+
+  // iterate over original image using its dimentions (height * width) 
+  for (int i = 0; i<height; i++) {
+    for (int j = 0; j<width; j++) {
+      // set new image at [j][i] to the val at original image [i][j] 
+      // which exists due to the new dimensions
+      newImage[j][i] = image[i][j];
     }
   }
 
-  // update height and width 
-  int temp = *height;
-  *height = *width;
-  *width = temp;
+  // give the calling scope the update tHeight and tWidth variables for using this new image
+  *tHeight = width;
+  *tWidth = height;
   return newImage;
-
 }
 
 void reverseRows(Pixel **image, int height, int width) {
-  int left = 0; 
-  int right = width - 1;
+  int left, right;
+  Pixel temp;
   for (int i = 0; i<height; i++) {
+    left = 0;
+    right = width-1;
     while (left < right) {
-      Pixel temp = image[i][left];
+      temp = image[i][left];
       image[i][left] = image[i][right];
       image[i][right] = temp;
       left++;

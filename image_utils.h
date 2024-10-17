@@ -48,7 +48,7 @@ Pixel ** copyImage(Pixel **image, int height, int width);
  * @param width The width of the original image.
  * @return A new 2D array of Pixels representing the rotated image.
  */
-Pixel **transpose(Pixel **image, int *height, int *width);
+Pixel **transpose(Pixel **image, int height, int widt, int *tHeight, int *tWidth);
 
 /**
  * This function will reverse every row in the 2D array of Pixels in order to complete the rotation of the image.
@@ -86,3 +86,6 @@ void flipVertical(Pixel **image, int height, int width);
  * @return A new 2D array of Pixel objects representing the rotated image.
  */
 Pixel ** rotateClockwise(Pixel **image, int height, int width);
+
+
+Pixel ** rotateCounterClockwise(Pixel **image, int height, int width)
